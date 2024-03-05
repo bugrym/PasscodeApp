@@ -8,15 +8,33 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.scenePhase) var scenePhase
+    @State private var isAuthenticated = false
+    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            if isAuthenticated {
+                VStack {
+                    Text("You're in!")
+                    
+                    Button("Log Out") {
+                        isAuthenticated.toggle()
+                    }
+                }
+            } else {
+                PasscodeView(isAuthenticated: $isAuthenticated)
+            }
         }
         .padding()
+        .onChange(of: scenePhase) { oldValue, newValue in
+            guard newValue == .background || newValue == .inactive else {
+                return
+            }
+            
+            isAuthenticated = false
+        }
     }
+    
 }
 
 #Preview {
